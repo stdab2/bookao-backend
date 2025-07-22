@@ -4,6 +4,8 @@ import com.dabs.book_ao.domain.dto.AuthorDto;
 import com.dabs.book_ao.domain.entities.Author;
 import com.dabs.book_ao.mappers.Mapper;
 import com.dabs.book_ao.services.AuthorService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -20,9 +22,10 @@ public class AuthorController {
     }
 
     @PostMapping(path = "/authors")
-    public AuthorDto createAuthor(@RequestBody AuthorDto author) {
+    public ResponseEntity<AuthorDto> createAuthor(@RequestBody AuthorDto author) {
         Author authorEntity = authorMapper.mapFrom(author);
         Author savedAuthorEntity = authorService.createAuthor(authorEntity);
-        return authorMapper.mapTo(savedAuthorEntity);
+        return new ResponseEntity<>(authorMapper.mapTo(savedAuthorEntity), HttpStatus.CREATED);
     }
+
 }
