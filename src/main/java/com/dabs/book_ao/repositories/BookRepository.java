@@ -1,6 +1,6 @@
 package com.dabs.book_ao.repositories;
 
-import com.dabs.book_ao.domain.Book;
+import com.dabs.book_ao.domain.entities.Book;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 

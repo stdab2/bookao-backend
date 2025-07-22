@@ -1,4 +1,4 @@
-package com.dabs.book_ao.domain;
+package com.dabs.book_ao.domain.entities;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
