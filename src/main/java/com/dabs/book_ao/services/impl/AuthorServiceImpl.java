@@ -6,6 +6,7 @@ import com.dabs.book_ao.services.AuthorService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -19,7 +20,7 @@ public class AuthorServiceImpl implements AuthorService {
     }
 
     @Override
-    public Author createAuthor(Author author) {
+    public Author save(Author author) {
         return authorRepository.save(author);
     }
 
@@ -30,5 +31,15 @@ public class AuthorServiceImpl implements AuthorService {
                 .spliterator(),
                 false)
             .collect(Collectors.toList());
+    }
+
+    @Override
+    public Optional<Author> findOne(Long id) {
+        return authorRepository.findById(id);
+    }
+
+    @Override
+    public boolean isExists(Long id) {
+        return authorRepository.existsById(id);
     }
 }
