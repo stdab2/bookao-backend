@@ -24,6 +24,13 @@ public final class TestDataUtil {
                 .build();
     }
 
+    public static AuthorDto createTestAuthorDtoB() {
+        return AuthorDto.builder()
+                .name("Thomas Cronin")
+                .age(44)
+                .build();
+    }
+
     public static Author createTestAuthorC() {
         return Author.builder()
                 .name("Jesse A Casey")

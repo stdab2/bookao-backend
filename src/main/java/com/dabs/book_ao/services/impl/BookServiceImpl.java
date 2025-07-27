@@ -43,4 +43,18 @@ public class BookServiceImpl implements BookService {
     public boolean isExists(String isbn) {
         return bookRepository.existsById(isbn);
     }
+
+    @Override
+    public Book partialUpdate(String isbn, Book book) {
+        book.setIsbn(isbn);
+        return bookRepository.findById(isbn).map(foundBook -> {
+            Optional.ofNullable(book.getTitle()).ifPresent(foundBook::setTitle);
+            return bookRepository.save(foundBook);
+        }).orElseThrow(() -> new RuntimeException("Book does not exist"));
+    }
+
+    @Override
+    public void delete(String isbn) {
+        bookRepository.deleteById(isbn);
+    }
 }

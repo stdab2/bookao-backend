@@ -2,6 +2,7 @@ package com.dabs.book_ao.controllers;
 
 import com.dabs.book_ao.TestDataUtil;
 import com.dabs.book_ao.domain.dto.BookDto;
+import com.dabs.book_ao.domain.entities.Author;
 import com.dabs.book_ao.domain.entities.Book;
 import com.dabs.book_ao.services.BookService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -51,7 +52,7 @@ public class BookControllerIntegrationTests {
     }
 
     @Test
-    public void testThatUpdateBookSuccessfullyReturnsHttp200Created() throws Exception {
+    public void testThatFullUpdateBookSuccessfullyReturnsHttp200Created() throws Exception {
         Book book = TestDataUtil.createTestBookA(null);
         Book savedBook = bookService.save(book.getIsbn(), book);
         BookDto bookUpdated = TestDataUtil.createTestBookDtoA(null);
@@ -60,6 +61,23 @@ public class BookControllerIntegrationTests {
 
         mockMvc.perform(
                 MockMvcRequestBuilders.put("/books/" + savedBook.getIsbn())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(bookDtoJson)
+        ).andExpect(
+                MockMvcResultMatchers.status().isOk()
+        );
+    }
+
+    @Test
+    public void testThatPartialUpdateBookSuccessfullyReturnsHttp200Ok() throws Exception {
+        Book book = TestDataUtil.createTestBookA(null);
+        Book savedBook = bookService.save(book.getIsbn(), book);
+        BookDto bookUpdated = TestDataUtil.createTestBookDtoA(null);
+        bookUpdated.setIsbn(savedBook.getIsbn());
+        String bookDtoJson = mapper.writeValueAsString(bookUpdated);
+
+        mockMvc.perform(
+                MockMvcRequestBuilders.patch("/books/" + savedBook.getIsbn())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(bookDtoJson)
         ).andExpect(
@@ -84,7 +102,7 @@ public class BookControllerIntegrationTests {
     }
 
     @Test
-    public void testThatUpdateBookSuccessfullyReturnsUpdatedBook() throws Exception {
+    public void testThatFullUpdateBookSuccessfullyReturnsUpdatedBook() throws Exception {
         Book book = TestDataUtil.createTestBookA(null);
         Book savedBook = bookService.save(book.getIsbn(), book);
 
@@ -95,6 +113,27 @@ public class BookControllerIntegrationTests {
 
         mockMvc.perform(
                 MockMvcRequestBuilders.put("/books/" + savedBook.getIsbn())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(bookDtoJson)
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$.isbn").value(bookDto.getIsbn())
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$.title").value(bookDto.getTitle())
+        );
+    }
+
+    @Test
+    public void testThatPartialUpdateBookSuccessfullyReturnsUpdatedBook() throws Exception {
+        Book book = TestDataUtil.createTestBookA(null);
+        Book savedBook = bookService.save(book.getIsbn(), book);
+
+        BookDto bookDto = TestDataUtil.createTestBookDtoA(null);
+        bookDto.setIsbn(savedBook.getIsbn());
+        bookDto.setTitle("NEW TITLE");
+        String bookDtoJson = mapper.writeValueAsString(bookDto);
+
+        mockMvc.perform(
+                MockMvcRequestBuilders.patch("/books/" + savedBook.getIsbn())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(bookDtoJson)
         ).andExpect(
@@ -164,4 +203,16 @@ public class BookControllerIntegrationTests {
         );
     }
 
+    @Test
+    public void testThatDeleteBookSuccessfullyReturnsHttp204() throws Exception {
+        Book book = TestDataUtil.createTestBookA(null);
+        Book savedBook = bookService.save(book.getIsbn(), book);
+
+        mockMvc.perform(
+                MockMvcRequestBuilders.delete("/books/{isbn}", savedBook.getIsbn())
+                        .contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(
+                MockMvcResultMatchers.status().isNoContent()
+        );
+    }
 }

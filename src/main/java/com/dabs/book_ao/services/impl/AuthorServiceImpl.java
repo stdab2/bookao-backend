@@ -42,4 +42,19 @@ public class AuthorServiceImpl implements AuthorService {
     public boolean isExists(Long id) {
         return authorRepository.existsById(id);
     }
+
+    @Override
+    public Author partialUpdate(Long id, Author author) {
+        author.setId(id);
+        return authorRepository.findById(id).map(foundAuthor -> {
+            Optional.ofNullable(author.getName()).ifPresent(foundAuthor::setName);
+            Optional.ofNullable(author.getAge()).ifPresent(foundAuthor::setAge);
+            return authorRepository.save(foundAuthor);
+        }).orElseThrow(() -> new RuntimeException("Author does not exist"));
+    }
+
+    @Override
+    public void delete(Long id) {
+        authorRepository.deleteById(id);
+    }
 }
